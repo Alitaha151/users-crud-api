@@ -56,7 +56,7 @@ Example create request:
 
 ## Postman
 
-Import `postman/Users-CRUD.postman_collection.json` into Postman. Run **Create user** first, then set the `userId` collection variable to the returned `id` before running the individual-user, update, and delete requests.
+Import `postman/Users-CRUD.postman_collection.json` into Postman and run the collection in order. The **Create user** request checks its response and stores the returned `id` in the `userId` collection variable. The remaining requests include assertions for their expected response codes and data.
 
 ## Tests
 
