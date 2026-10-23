@@ -1,0 +1,117 @@
+{
+  "info": {
+    "_postman_id": "605cc388-487e-4fd8-8997-4c74a20c3458",
+    "name": "Users CRUD API",
+    "description": "Requests for creating, reading, updating, and deleting users. Start the API locally and set baseUrl to http://localhost:3000.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "userId",
+      "value": "1"
+    }
+  ],
+  "item": [
+    {
+      "name": "Create user",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Ada Lovelace\",\n  \"email\": \"ada@example.com\",\n  \"age\": 36\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/users"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('User is created', function () { pm.response.to.have.status(201); });",
+              "const user = pm.response.json();",
+              "pm.test('Created user has required fields', function () { pm.expect(user).to.have.property('id'); pm.expect(user.email).to.eql('ada@example.com'); });",
+              "pm.collectionVariables.set('userId', user.id);"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get all users",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('Users are returned', function () { pm.response.to.have.status(200); pm.expect(pm.response.json()).to.be.an('array'); });",
+              "pm.test('Created user appears in list', function () { pm.expect(pm.response.json().some(function (user) { return String(user.id) === String(pm.collectionVariables.get('userId')); })).to.eql(true); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Get user by id",
+      "request": { "method": "GET", "url": "{{baseUrl}}/api/users/{{userId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('User is found', function () { pm.response.to.have.status(200); pm.expect(String(pm.response.json().id)).to.eql(String(pm.collectionVariables.get('userId'))); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Update user",
+      "request": {
+        "method": "PUT",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Ada Lovelace Byron\"\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": "{{baseUrl}}/api/users/{{userId}}"
+      },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('User is updated', function () { pm.response.to.have.status(200); pm.expect(pm.response.json().name).to.eql('Ada Lovelace Byron'); });"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "Delete user",
+      "request": { "method": "DELETE", "url": "{{baseUrl}}/api/users/{{userId}}" },
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "pm.test('User is deleted', function () { pm.response.to.have.status(204); pm.expect(pm.response.text()).to.eql(''); });"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}
